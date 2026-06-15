@@ -237,15 +237,28 @@
     }
     .slide.active { opacity: 1; z-index: 1; }
 
+    .slide-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-size: cover;
+      background-position: center;
+      filter: blur(22px) brightness(1.05);
+      transform: scale(1.12);
+    }
+
     .slide img {
+      position: relative;
+      z-index: 1;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
       display: block;
     }
 
     .slide-caption {
       position: absolute;
+      z-index: 2;
       bottom: 0; left: 0; right: 0;
       background: linear-gradient(transparent, rgba(254,252,249,0.97));
       padding: 2.5rem 1.8rem 1.4rem;
@@ -1187,6 +1200,17 @@
 
     resetTimer();
   }
+
+  // Fill the letterbox area behind each (now fully-visible) photo with a soft
+  // blurred copy of itself, so portrait and landscape shots both show in full.
+  document.querySelectorAll('.slide').forEach(slide => {
+    const img = slide.querySelector('img');
+    if (!img) return;
+    const bg = document.createElement('div');
+    bg.className = 'slide-bg';
+    bg.style.backgroundImage = "url('" + img.getAttribute('src').replace(/'/g, "%27") + "')";
+    slide.insertBefore(bg, slide.firstChild);
+  });
 
   ['ss-wedding-cakes','ss-floral-cakes','ss-birthday-cakes','ss-kids-cakes',
    'ss-novelty-cakes','ss-sheet-cakes','ss-celebration-cakes','ss-holiday-and-seasonal','ss-cupcakes']
